@@ -9,7 +9,7 @@ The program contacts the endpoint below in order to obtain search results in ord
 #### Example Endpoint URL
 
 ```
-https://itunes.apple.com/search?term=Kanye+West+Champion&limit=1
+https://itunes.apple.com/search?term=Kanye+West+Champion&limit=1&entity=song
 ```
 
 #### Example Endpoint Result
