@@ -28,7 +28,7 @@ public class AMTest {
     public static void main(String[] args) {
         String searchSong = getAnswer("What song do you wish to find a preview for? (eg. Kanye West POWER)");
         System.out.println("Sending a search request to iTunes API.");
-        RequestCreator searchRequest = RequestCreator.get("https://itunes.apple.com/search?term=" + ParseUtil.encodePath(searchSong) + "&limit=10");
+        RequestCreator searchRequest = RequestCreator.get("https://itunes.apple.com/search?term=" + ParseUtil.encodePath(searchSong) + "&limit=10&entity=song");
         if(!searchRequest.isSuccessful()) {
             System.out.println("Sorry - your search was unsuccessful (ERROR: " + searchRequest.getResponse() + ") - " + searchRequest.getErrorMessage());
             return;
@@ -47,7 +47,7 @@ public class AMTest {
                 foundSounds.add(new AMSong(jsonObject.getString("trackName"),
                         jsonObject.getString("artistName"),
                         jsonObject.getString("collectionName"),
-                        jsonObject.getString("contentAdvisoryRating").equalsIgnoreCase("Explicit"),
+                        !jsonObject.getString("trackExplicitness").equalsIgnoreCase("notExplicit"),
                         jsonObject.getString("previewUrl")));
                 }
             }
@@ -112,7 +112,7 @@ public class AMTest {
     }
     
     public static boolean isValidTrack(JSONObject jsonObject) {
-        return jsonObject.has("artistName") && jsonObject.has("trackName") && jsonObject.has("collectionName") && jsonObject.has("contentAdvisoryRating") && jsonObject.has("previewUrl");
+        return jsonObject.has("artistName") && jsonObject.has("trackName") && jsonObject.has("collectionName") && jsonObject.has("trackExplicitness") && jsonObject.has("previewUrl");
     }
 
     public static File createTempFile(InputStream in) throws IOException {
