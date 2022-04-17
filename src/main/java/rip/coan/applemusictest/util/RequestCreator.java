@@ -1,14 +1,13 @@
 package rip.coan.applemusictest.util;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import rip.coan.applemusictest.AMTest;
 
-import java.util.Map;
 import java.util.Objects;
 
 @Data @AllArgsConstructor
@@ -37,8 +36,8 @@ public class RequestCreator {
         }
     }
 
-    public JSONObject asJSONObject() {
-        return new JSONObject(new JSONTokener(this.response));
+    public JsonObject asJSONObject() {
+        return JsonParser.parseString(this.response).getAsJsonObject();
     }
 
 }

@@ -1,10 +1,12 @@
 package rip.coan.applemusictest;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.Getter;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import rip.coan.applemusictest.util.AACPlayer;
 import rip.coan.applemusictest.util.RequestCreator;
 
@@ -34,24 +36,18 @@ public class AMTest {
             return;
         }
 
-        JSONObject jsonResults = searchRequest.asJSONObject();
-        System.out.println("We found: " + jsonResults.getInt("resultCount") + " - filtering now.");
-        JSONArray jsonArray = jsonResults.getJSONArray("results");
+
+        JsonObject jsonResults = searchRequest.asJSONObject();
+        System.out.println("We found: " + jsonResults.get("resultCount").getAsInt() + " - filtering now.");
+        JsonArray jsonArray = jsonResults.getAsJsonArray("results");
 
         List<AMSong> foundSounds = new ArrayList<>();
 
-        for (Object object : jsonArray) {
-            JSONObject jsonObject = (JSONObject)object;
-
-            if(isValidTrack(jsonObject)) {
-                foundSounds.add(new AMSong(jsonObject.getString("trackName"),
-                        jsonObject.getString("artistName"),
-                        jsonObject.getString("collectionName"),
-                        !jsonObject.getString("trackExplicitness").equalsIgnoreCase("notExplicit"),
-                        jsonObject.getString("previewUrl")));
-                }
-            }
-        
+        for (JsonElement jsonElement : jsonArray) {
+            AMSong amSong = new Gson().fromJson(jsonElement, AMSong.class);
+            if(amSong == null || !amSong.isValidTrack()) continue;
+            foundSounds.add(amSong);
+        }
 
         System.out.println("We found " + foundSounds.size() + " songs - here's what we found:");
         System.out.println();
@@ -109,10 +105,6 @@ public class AMTest {
         System.out.println(text);
 
         return myObj.nextLine();
-    }
-    
-    public static boolean isValidTrack(JSONObject jsonObject) {
-        return jsonObject.has("artistName") && jsonObject.has("trackName") && jsonObject.has("collectionName") && jsonObject.has("trackExplicitness") && jsonObject.has("previewUrl");
     }
 
     public static File createTempFile(InputStream in) throws IOException {

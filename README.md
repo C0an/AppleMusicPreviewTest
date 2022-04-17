@@ -60,7 +60,7 @@ https://itunes.apple.com/search?term=Kanye+West+Champion&limit=1&entity=song
 This program uses a few dependencies in order to achieve its use, here are the used depends:
 - okhttp3
 - lombok
-- json
+- gson
 - guava
 - JAAD
 - commons-io
